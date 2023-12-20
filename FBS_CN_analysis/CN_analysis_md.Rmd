@@ -1,0 +1,126 @@
+---
+output:
+  html_document:
+    number_sections: false
+---
+
+```{r title, include=FALSE}
+# title <- title_var
+```
+
+```{css, echo=FALSE}
+ {
+  font-size: 19px;
+}
+```
+
+<!-- Need the pipes in the next code chunk in order to cope with a colon in the title and to place the title on a separate line from the images -->
+<!-- The ![](){} syntax is used for inserting images.  -->
+<!-- Anything in the square brackets becomes the caption (here blank). -->
+<!-- The round brackets specify the image filepath. -->
+<!-- The curly brackets are for image formatting (here width and positioning) -->
+<!-- The SG logo should be 7.3cm wide if printed on A4 paper. That seems to be achieved by specifying its width as 8.7cm here. -->
+<!-- A space is also needed immediately after this line, and before the "---". -->
+
+---
+title: | 
+  | !["Rural & Environmental Science and Analytical Services logo"](RESAS_logo_mg.jpg){width="7.8cm" style="float: left"}!["Scottish Government/Riaghaltas na h-Alba logo"](Scottish_Government_logo_RGB.jpg){width=8.7cm style="float: right; padding-top: 0.34cm"}
+  | <!-- A space is needed here to prevent pipes appearing in the title. -->
+  | <!-- Extra white space to separate logos and title -->
+  | `r paste0(title_line1)`
+  | `r paste0(title_line2)`
+---
+<br>
+
+# Summary
+
+These new and experimental data provide greenhouse gas emission estimates and nitrogen use estimates for the average Scottish farm over the last three years. These data complement national-level estimates and enterprise-specific estimates by providing a view and time series of emissions and nitrogen use on real farms. 
+
+This analysis is based on a survey of around 400 commercial farms. Data do not cover the full agricultural industry and are not comparable with national estimates.
+
+Absolute gross greenhouse gas emissions per hectare and per unit of product are estimated using a carbon calculator.
+
+Nitrogen estimates are based on standard estimates of nitrogen content in all farm inputs and outputs, where possible. 
+
+Nitrogen balance estimates the amount of nitrogen that might be lost to the environment.
+
+Estimates of nitrogen use efficiency, the ratio of nitrogen outputs to inputs, vary by farm output type. Arable farms typically have higher nitrogen use efficiency estimates than livestock farms.
+
+The [full publication on gov.scot](`r publication_url`) contains additional commentary. All data tables are available to download in the associated [supporting documents](`r documents_url`).
+
+<br>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+library(cowplot)
+library(pander)
+library(magick)
+library(quanteda)
+options(scipen=999)
+options(knitr.kable.NA = '--')
+```
+
+\newpage
+
+<!-- dpi argument in the next chunk is needed to stop figures being blurry -->
+<!-- 300 is probably overkill (default is 96, and that wasn't high enough), but file size is 2MB, which
+isn't unreasonable-->
+<!-- With three years data and a fig.width value of 8, the html is well-formatted, and converts nicely to a pdf with one type per page. -->
+<!-- This may need adjusting when more years' data is included. -->
+<!-- Note that in the html file, the figure is automatically zoomed to full width; specifying the fig.width here is actually just a way of controlling the height:width ratio of the charts. -->
+```{r all_plots, echo=FALSE, message=FALSE, fig.width=8, results = "asis", dpi=300}
+for (i in Output_types) {
+  if(i==Output_types[1]){
+
+    cat("\n# Farmtype summaries\n")
+    cat("<br>")
+
+  }  
+  # Use the output_plot function to create four plots, and then arrange in a grid.
+  # Input arguments are type, title, quantity and y-axis label
+  g_co2perha <- output_plot(i, "Absolute emissions", "t CO2-e per ha", "t CO"[2]~"-e / ha", "#00833E")
+  g_co2perkg <- output_plot(i, "Emission intensity", "kg CO2-e per kg output", "kg CO"[2]~"-e / kg output", "#00833E")
+  g_Nsurplus <- output_plot(i, "Nitrogen balance", "Nitrogen surplus (kg)", "kg N surplus / ha", "#6EA022")
+  g_NUE <- output_plot(i, "Nitrogen use efficiency", "Nitrogen use efficiency (%)", "NUE (%)", "#6EA022")
+  if(i==9){
+    farmtype_title <- "Average farm"
+  } else{
+      farmtype_title <- paste0("Average ",char_tolower(fbs_type_words[i], keep_acronyms = T)," farm")
+  }
+  farmtype_title <- paste0(farmtype_title,"  \n")
+  g_grid <- grid.arrange(g_co2perha, g_co2perkg, g_Nsurplus, g_NUE,
+                         top=textGrob(farmtype_title,gp=gpar(fontsize=20,font=1),x=0,hjust=0),
+                         bottom=textGrob("   Results are shown for the average (median) farm.\nError bars demonstrate the spread of data from the lower to upper quartile.", gp=gpar(fontsize=11.5,font=1),x=0,hjust=-0.08))
+  
+  cat('<br>')
+  cat('<br>')
+  
+  ## Next two lines used to create charts with no farmtype-titles, for dropping into powerpoint.
+  # g_grid_no_typetitle <- grid.arrange(g_co2perha, g_co2perkg, g_Nsurplus, g_NUE)
+  # ggsave(file=paste0(Output_directory,"/Charts/Farm Business Survey ", max(sampyear_range)-1,"-",max(sampyear_range)-2000," - Carbon and Nitrogen charts - ",fbs_type_words[i],".png"), plot=g_grid_no_typetitle, height=6,width=10)
+  
+  ##Individual farmtype commentaries (uncomment to include)
+  #Cereal
+  # if(i==1){cat('Cereals, such as barley and wheat are lorum ipsum...')}
+  # #General cropping
+  # if(i==2){cat('General cropping commentary goes here...')}
+  # #Dairy
+  # if(i==3){cat('')}
+  # #Mixed
+  # if(i==8){cat('')}
+  # #All farms
+  # if(i==9){cat('')}
+  # #All LFA livestock farms
+  # if(i==10){cat('')}
+  ##Add some whitespace between farmtypes, and a page break in a sensible location (only applies if html is "printed" to pdf)
+  cat('<br>')
+  cat('<br>')
+  cat('\\newpage')
+}
+```
+
+<!-- [1] All farm types includes lowland cattle and sheep farms. -->
+
+<!-- ![](RESAS_logo_mg.jpg){width="7.8cm" style="float: left"}![](Scottish_Government_logo_RGB.jpg){width=8.7cm style="float: right; padding-top: 0.34cm"} -->
+

@@ -1,0 +1,160 @@
+---
+output:
+  html_document:
+    number_sections: true
+---
+```{r title, include=F}
+title <- title_var
+```
+---
+title: `r title_var`
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+options(scipen=999)
+options(knitr.kable.NA = '--')
+```
+
+
+# Summary
+<center>**Summary table** - Representativeness of the `r paste0(crop_year, "-", year+1)` FBS sample in relation to `r paste0(crop_year)` census by different measures.</center>
+```{r Summary_table, echo=FALSE}
+Summary_table %>% 
+  kable(format = "html", format.args = list(big.mark = ",")) %>% 
+  kable_styling(position = "center",font_size = 14) %>% 
+  row_spec(0, bold = TRUE, background = "#2c7b3e",color = "white", extra_css = "line-height: 20px; vertical-align: middle;")
+```
+In this report analysis has been performed at Business Reference Number (BRN) and holding level. Most data is at holding level and holdings may be referred to simply as ‘farms’.
+
+Please note that the figures provided here are intended for internal reference; if you are using content that has not been published then please discuss with the FBS team.
+
+
+# Background
+## Farm Business Survey
+
+The Farm Business Survey (FBS) is an annual survey based on a sample of approximately `r round(max(Table_1$fbs_sample), digits=-2)` farm businesses. Data on the number of holdings within each farm business in the sample is not currently available, and so the percentage calculations below assume that an FBS farm is equivalent to a single holding.
+
+The results from the Farm Business Survey are published annually. The 2021-2022 results are available [here](`r publication_link`).
+
+The FBS results are obtained from a sample of farms that are stratified by farm type and economic size based on standard output^[Standard Outputs represent the estimated farm-gate worth (£s) of crops and animals without taking account of the costs incurred in production. Standard outputs use consistent price coefficients across all farms for crops and livestock. The individual SO coefficients for crops and livestock are listed here: https://www.gov.scot/Topics/Statistics/Browse/Agriculture-Fisheries/Publications/SOCoeffs]. 
+
+The `r paste0(crop_year, "-", year+1)` FBS collects farm business level data for the accounting year `r paste0(crop_year, "-", year+1)`, which relates to the `r paste(crop_year)` crop year.
+
+The coverage of the survey is restricted to those farms which have considerable economic activity (at least €`r format(FBS_euro_threshold, big.mark=',')` of standard output, equivalent to £`r format(round(FBS_euro_threshold*exchange_rate, digits=-1),big.mark=',')`) and are not considered as part-time farms (have a Standard Labour Requirement^[Standard Labour Requirements represent the approximate average labour requirement for a livestock or crop enterprise.  The annual hours of a full-time worker is 1900 hours.] (SLR) of more than `r FBS_slr_threshold`).
+
+The survey does not currently include farms predominantly engaged in horticulture, poultry, egg production or pig production.
+
+Farms in the survey are classified into eight farm types based on the relative importance of the various crop and livestock enterprises on each farm, assessed in terms of standard output. Two thirds or more of a farm's standard output must be associated with the major farm type, for example, a farm is classified as a Cereals farm if 2/3 or more of standard output is associated with cereal production (Farms where no enterprise constitutes 2/3 of standard output are classified as Mixed). The eight farm types are:
+
+
+* Cereals
+* General Cropping
+* Dairy
+* Less Favoured Area (LFA) sheep
+* LFA beef
+* LFA cattle and sheep
+* Lowland cattle and sheep
+* Mixed
+
+The FBS sample is primarily drawn from the June Agricultural Census (JAC). The FBS is a longitudinal survey, and many farms stay in the sample for five or more years. Results from the survey are weighted to the June Agricultural Census to give an estimate of values for the population of farms within the FBS thresholds, as shown in the Summary table.
+
+
+## June Agricultural Census
+The June Agricultural Census is conducted annually. In addition to the farm types contained in the FBS sample, the JAC also collects data on several other farm types, including horticulture, pigs and poultry^[For more information on farm type classifications see: https://www.webarchive.org.uk/wayback/archive/20150220115209/http:/www.gov.scot/Publications/2013/06/5219/12].
+
+Data are requested from all farms which submitted a Single Application Form (SAF) in the previous year, together with some other large businesses that would not be eligible for support payments. A sample of farms which did not submit a SAF or who did not return a form last year were also sent a census form. Crofts are also included in the census.
+
+Data for the `r paste (crop_year)` June census was collected from three sources:
+
+* Land data were extracted from the Single Application Form (SAF) database for around `r format(round(saf_holdings, digits=-2),big.mark=',')` farms that are claiming under the Basic Payment Scheme (BPS). Farms that submitted a SAF in `r paste(crop_year)` were also sent a cut-down census form (`r format(round(cutdown_census, digits=-2),big.mark=',')` forms) to collect the additional data on livestock and labour.
+* From the remaining farms that did not complete a SAF in `r paste(crop_year)`, `r format(round(10000, digits=-2),big.mark=',')` (potentially including farms that submitted a SAF for the first time in `r paste(crop_year)`) were sent a full census form covering land, livestock and labour.
+*	All cattle data (including data on cattle breeds) were collected from the Cattle Tracing Scheme (CTS) administrative source.
+
+This means that the census effectively has 100 per cent coverage, even for those smaller farms that were not selected for inclusion in the census.
+
+# FBS sample in relation to the population
+
+
+
+The `r paste0(crop_year, "-", year+1)` FBS is representative of `r format(round(max(Table_1$above_fbs_threshold)), big.mark=',')` farms. The breakdown of the FBS sample is in Table 1.
+
+<center>**Table 1** - `r paste0(crop_year, "-", year+1)` FBS sample in relation to `r paste0(crop_year)` census with FBS thresholds.</center>
+```{r Table_1, echo=FALSE}
+Table_1_out %>% 
+  kable(format = "html", format.args = list(big.mark = ",")) %>% 
+  kable_styling(position = "center",font_size = 14) %>% 
+  row_spec(0, bold = TRUE, background = "#2c7b3e",color = "white", extra_css = "line-height: 20px; vertical-align: middle;") %>% 
+ row_spec(c(1:9), bold = TRUE)
+```
+---
+ 
+The total June Census population in `r crop_year` was `r format(max(Table_2$census_population), big.mark=',')` farms. Tables 2 to 5 show how the FBS threshold farms in the census relate to the overall population, in terms of:
+
+*	number of farms
+*	total area
+*	total workforce (including farmers, spouses, regular hired staff and casual hired staff)
+*	total standard output
+
+This is broken down by farm type. There are two total values given – one for all farms regardless of whether that farm type is included in the FBS and the other only counting farms which meet the FBS criteria for farm type, economic activity and labour requirement.
+
+
+<center>**Table 2** - FBS threshold farms in relation to the total census population by number of farms</center>
+```{r Table_2, echo=FALSE}
+Table_2_out %>% 
+  kable(format = "html", align = "lrrr", format.args = list(big.mark = ",")) %>% 
+  kable_styling(position = "center",font_size = 14) %>% 
+  add_header_above(c(" "=1,"Number of farms"=3), background = "#2c7b3e",color = "white", bold = T) %>% 
+  row_spec(0, bold = TRUE, background = "#2c7b3e",color = "white", extra_css = "line-height: 20px; vertical-align: middle;") %>%
+  row_spec(c(1:8,15), bold = TRUE)
+```
+---
+ 
+<center>**Table 3** - FBS threshold farms in relation to the total census population by total area.</center>
+```{r Table_3, echo=FALSE}
+Table_3_out %>% 
+  kable(format = "html", align = "lrrr", format.args = list(big.mark = ",")) %>% 
+  kable_styling(position = "center",font_size = 14) %>% 
+  add_header_above(c(" "=1,"Total area (hectares)"=3), background = "#2c7b3e",color = "white", bold = T) %>% 
+  row_spec(0, bold = TRUE, background = "#2c7b3e",color = "white", extra_css = "line-height: 20px; vertical-align: middle;") %>%
+  row_spec(c(1:8,15), bold = TRUE)
+```
+---
+ 
+<center>**Table 4** - FBS threshold farms in relation to the total census population by total workforce.</center>
+```{r Table_4, echo=FALSE}
+Table_4_out %>% 
+  kable(format = "html", align = "lrrr", format.args = list(big.mark = ",")) %>% 
+  kable_styling(position = "center",font_size = 14) %>% 
+  add_header_above(c(" "=1,"Total workforce"=3), background = "#2c7b3e",color = "white", bold = T) %>% 
+  row_spec(0, bold = TRUE, background = "#2c7b3e",color = "white", extra_css = "line-height: 20px; vertical-align: middle;") %>%
+  row_spec(c(1:8,15), bold = TRUE)
+```
+---
+ 
+<center>**Table 5** - FBS threshold farms in relation to the total census population by standard output.</center>
+```{r Table_5, echo=FALSE}
+Table_5_out %>% 
+  kable(format = "html", align = "lrrr", format.args = list(big.mark = ",")) %>% 
+  kable_styling(position = "center",font_size = 14) %>% 
+  add_header_above(c(" "=1,"Standard output (£)"=3), background = "#2c7b3e",color = "white", bold = T) %>% 
+  row_spec(0, bold = TRUE, background = "#2c7b3e",color = "white", extra_css = "line-height: 20px; vertical-align: middle;") %>%
+  row_spec(c(1:8,15), bold = TRUE)
+```
+---
+ 
+<center>**Table 6** - FBS threshold farms in relation to the total census population by numbers of sheep.</center>
+```{r Table_99, echo=FALSE}
+Table_99_out %>% 
+  kable(format = "html", align = "lrrr", format.args = list(big.mark = ",")) %>% 
+  kable_styling(position = "center",font_size = 14) %>% 
+  add_header_above(c(" "=1, "Sheep numbers"=3), background = "#2c7b3e",color = "white", bold = T) %>% 
+  row_spec(0, bold = TRUE, background = "#2c7b3e",color = "white", extra_css = "line-height: 20px; vertical-align: middle;") %>%
+  row_spec(c(1:8,15), bold = TRUE)
+```
+---
+
+
+
+
+

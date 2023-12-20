@@ -1,0 +1,68 @@
+---
+output:
+  html_document:
+    number_sections: true
+---
+```{r title_var2, include=F}
+title_BRN <- paste0(title_var," with BRNs")
+```
+---
+title: `r paste0(title_BRN)`
+---
+
+
+```{r main_report, child = 'FBS_cf_census.Rmd', echo=FALSE}
+```
+
+# Appendix: Businesses and holdings
+
+
+Some farms in the census also have Business Registration Number (BRN) data available. This allows us to know where a single business operates multiple holdings. Table A shows the number of businesses with at least one holding in each farmtype classification, along with the number of holdings in each category for which BRN numbers are/are not available. Table A1 shows the same information, but only for holdings which meet the FBS criteria.
+
+<center>**Table A** - Numbers of businesses and holdings (with and without an associated BRN) in the `r crop_year` JAC.</center>  
+```{r Table_A, echo=FALSE}
+Table_A_out %>% 
+  kable(format = "html", align = "lrrrr", format.args = list(big.mark = ",")) %>% 
+  kable_styling(position = "center",font_size = 14) %>% 
+  add_header_above(c(" "=1," "=4), background = "#2c7b3e",color = "white", bold = T) %>% 
+  row_spec(0, bold = TRUE, background = "#2c7b3e",color = "white", extra_css = "line-height: 20px; vertical-align: middle;") %>%
+  row_spec(c(1:8,16), bold = TRUE)
+```
+---
+
+<center>**Table A1** - Numbers of businesses and holdings (with and without an associated BRN) in the `r crop_year` JAC (excluding holdings which do not meet FBS criteria).</center>
+```{r Table_A1, echo=FALSE}
+Table_A1_out %>% 
+  kable(format = "html", align = "lrrrr", format.args = list(big.mark = ",")) %>% 
+  kable_styling(position = "center",font_size = 14) %>% 
+  add_header_above(c(" "=1," "=4), background = "#2c7b3e",color = "white", bold = T) %>% 
+  row_spec(0, bold = TRUE, background = "#2c7b3e",color = "white", extra_css = "line-height: 20px; vertical-align: middle;") %>%
+  row_spec(c(1:9), bold = TRUE)
+```
+---
+
+
+Table B shows the number of businesses with holdings of each type in the given number ranges - for example there are `r Table_B_out[1,"2"]` businesses operating 2 cereals holdings (these businesses may or may not also operate holdings of other farm types). Some farm businesses operate holdings of different farm types, and so may not necessarily be represented in farm type rows below. In `r paste(crop_year)` there were `r paste(businesses_multi_types_businesses)` businesses with holdings of different farm types. These businesses operated `r paste(businesses_multi_types_holdings)` holdings.
+
+ <center>**Table B** - Farm businesses operating multiple holdings.</center>
+```{r Table_B, echo=FALSE}
+ Table_B_out %>%
+   kable(format = "html", format.args = list(big.mark = ",")) %>%
+   kable_styling(position = "center",font_size = 14) %>%
+   add_header_above(c("Farm type"=1,"Number of businesses with holdings in the given category"=6), background = "#2c7b3e",color = "white", bold = T) %>%
+   row_spec(0, bold = TRUE, background = "#2c7b3e",color = "white", extra_css = "line-height: 20px; vertical-align: middle;") %>%
+   row_spec(c(1:8,16), bold = TRUE)
+```
+---
+
+Table B1 shows the same information as in Table B, but only for holdings which meet the FBS criteria. Some farm businesses operate holdings of different farm types, and so may not necessarily be represented in farm type rows below. In `r paste(crop_year)` there were `r paste(businesses_multi_types_businesses_threshold)` businesses with holdings of different farm types, and which met FBS thresholds. These businesses operated `r paste(businesses_multi_types_holdings_threshold)` holdings which met the FBS thresholds.
+
+ <center>**Table B1** - Farm businesses operating multiple holdings (excluding holdings which do not meet FBS criteria).</center>
+```{r Table_B1, echo=FALSE}
+ Table_B1_out %>%
+   kable(format = "html", format.args = list(big.mark = ",")) %>%
+   kable_styling(position = "center",font_size = 14) %>%
+   add_header_above(c("Farm type"=1,"Number of businesses with holdings which meet FBS criteria in the given category"=6), background = "#2c7b3e",color = "white", bold = T) %>%
+   row_spec(0, bold = TRUE, background = "#2c7b3e",color = "white", extra_css = "line-height: 20px; vertical-align: middle;") %>%
+   row_spec(c(1:9), bold = TRUE)
+```
