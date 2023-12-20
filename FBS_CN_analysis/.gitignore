@@ -50,3 +50,9 @@ rsconnect/
 
 #Input datasets
 *.sas7bdat
+*.csv
+*.xls*
+
+#Images etc.
+*html
+*svg
