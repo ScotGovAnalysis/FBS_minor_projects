@@ -368,8 +368,3 @@ for (i in 1:9){
   row.names(triangle_table) <- paste(carbon_audit_years)
   triplot <- triangle.plot(select(triangle_table,-type),sub=type_words[i], csub=2, possub="bottomleft", addmean=TRUE,scale=FALSE,label=row.names(triangle_table),clab=0)
 }
-
-
-
-check <- merged_data %>% 
-  mutate(poundsperkg=fa_ifert/tonnes_bought_NPKT)
