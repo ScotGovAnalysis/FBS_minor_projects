@@ -1,0 +1,155 @@
+---
+title: "Fertiliser and other input costs - QA recommendations"
+output: html_document
+
+---
+
+`r source('InputCosts.R')`
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(out.width='1000px', dpi=200, echo = F)
+```
+
+## FBS data on input costs
+
+This is a brief report on work done in 2022 reviewing the data on input costs available in the Farm Business Survey (FBS). The main focus has been on feriliser data, as this is what the FBS has most data on, and it is of particular interest due to current high fertiliser prices.
+
+FBS data on fertiliser usage is presented below, along with guidance on how this (and other data sources) may be used for future quality assurance purposes. Recommendations for future data exploration are also included. All data from the FBS is weighted using the normal Farm Business Survey weightings.
+
+## Fertiliser usage
+
+The FBS captures data on fertiliser usage and the amount of money spent. The quantities are *not* per tonne of raw fertiliser, as this data isn't (yet) captured. Instead they are the nutrient weights^[Nutrient weights are the "N value", "P value" and "K value" multiplied by mass of fertiliser/100. This effectively gives the mass of active ingredient. See https://en.wikipedia.org/wiki/Labeling_of_fertilizer for more information.].
+
+
+The charts below show the quantities of fertiliser used and bought each year (per hectare of crop/grassland), broken down by farmtype. There are also charts showing the amount of money spent (per hectare of crop/grassland) and the average nutrient price.
+
+Total fertiliser quantity used/bought was also looked at, but didn't provide any useful additional insights (since farm size is roughly inversely proportional to fertiliser usage anyway, and farm size within farm types doesn't vary much).
+
+These graphs should give an indication of whether a change in how much money is spent on fertiliser reflects a change in the cost of fertiliser or in the amount of fertiliser used - this is likely to be useful for writing the annual FBS publication.
+
+Livestock and dairy farms tend to buy fertiliser early in the same financial year as it is used, whilst cereal and cropping farms will generally buy it at the end of the financial year before it is used (the difference is due to when farms are likely to have space in sheds, as well as the fertiliser requirements of cereals being more predictable than grass). This means that sudden price changes may only affect certain farmtypes.
+
+### Fertiliser used
+The graph below shows the average amount of fertiliser used per hectare of land used for agriculture. The black points are data from the British Survey of Fertiliser Practice (BSFP)^[https://www.gov.uk/government/statistics/british-survey-of-fertiliser-practice-2021], and show the total application rate for NPK on crops and grass in Scotland.
+
+
+<!-- #Graph of Average fertiliser used by farmtype -->
+```{r fert_used, echo=FALSE}
+ggplot(data=output_all) +
+  geom_point(BSFP_data, mapping = aes(x=cropyear, y=1000*BSFP_usage_T, shape="BSFP data"),size=2) +
+  geom_point(mapping=aes(x=cropyear, y=1000*avg_tonnes_used_ha_NPKT, colour=farmtype)) +
+  ylim(0,NA)+
+  xlab("Crop year") +
+  ylab("Average NPK used (kg/ha)")+
+  labs(colour="Farm type", shape="") + 
+  theme(legend.position = "right")
+```
+
+### Fertiliser bought
+<!-- #Graph of Average fertiliser bought by farmtype -->
+```{r fert_bought, echo=FALSE}
+ggplot(data=output_all) +
+  geom_point(mapping=aes(x=cropyear, y=1000*avg_tonnes_bought_ha_NPKT, colour=farmtype)) +
+  ylim(0,NA) +
+  xlab("Crop year") +
+  ylab("Average NPK bought (kg/ha)")+
+  labs(colour="Farm type") +
+  theme(legend.position = "right")
+```
+
+### Fertiliser surplus
+The average fertiliser surplus (i.e., (fertiliser bought-fertiliser used)/fertiliser bought) each year is shown below. For example, a farm which bought 100 tonnes of fertiliser and used 80 tonnes would have a surplus of +20%, whilst a farm which bought 80 tonnes and used 100 tonnes would have a surplus of -25%.
+
+
+
+<!-- #Graph of Average fertiliser surplus (100*(amount bought minus amount used)/amount_bought) -->
+```{r surplus, echo=FALSE}
+ggplot(data=output_all) +
+  geom_point(mapping=aes(x=cropyear, y=100*(avg_tonnes_bought_ha_NPKT-avg_tonnes_used_ha_NPKT)/avg_tonnes_bought_ha_NPKT, colour=farmtype)) +
+  xlab("Crop year") +
+  ylab("Average surplus (%)")+
+  labs(colour="Farm type") +
+  theme(legend.position = "right")
+```
+
+### Fertiliser spending  
+<!-- #Graph of Average spend on fertiliser by farmtype -->
+```{r fert_value, echo=FALSE}
+ggplot(data=output_all) +
+  geom_point(mapping=aes(x=cropyear, y=avg_fert_spend_ha, colour=farmtype)) +
+  xlab("Crop year") +
+  ylab("Average spend (£/ha)")+
+  ylim(0,NA) +
+  labs(colour="Farm type") +
+  theme(legend.position = "right")
+```
+
+The graph below shows the average price paid for a kilogram of active ingredient. The black points are the average nutrient price data from the John Nix Pocketbooks (weighted by usage of each nutrient in that given year)^[https://theandersonscentre.co.uk/publications/john-nix-farm-management-pocketbook/about-john-nix-pocketbook/ - the Pocketbooks are published in the September of the year prior to the cover year. For example, the 2022 Pocketbook was published in September 2021, and so the nutrient prices within it are shown in the graph as being for the 2021 crop year]. The average price from John Nix is consistently lower than that from FBS data. This may be due to prices in Scotland being higher than in the UK as a whole (which may reflect higher delivery costs or less bulk buying).
+<!-- #Graph of price per kg -->
+```{r fert_ppkg, echo=FALSE}
+ggplot(data=output_all) +
+  geom_point(nutrient_data, mapping = aes(x=cropyear, y=nutrient_price_T, shape="John Nix handbook data"), size=3) +
+  geom_point(mapping=aes(x=cropyear, y=pounds_per_kg, colour=farmtype)) +
+  ylim(0,NA) +
+  ylab("Nutrient price (£/kg)") +
+  xlab("Year")+
+  labs(colour="Farm type", shape="") +
+  theme(legend.position = "right")
+```
+
+### Organic/inorganic manure
+
+The proportion of nitrogen sourced from inorganic manure is shown in the chart below. As might be expected, livestock farms use substantially more organic manure than crop farms. Significant deviations from normal values would indicate that farm management practices are changing, potentially due to inorganic manure prices or policy changes. 
+
+```{r inorganic, echo=FALSE}
+ggplot(data=filter(output_all, ys_year %in% carbon_audit_years)) +
+  geom_point(mapping=aes(x=cropyear, y=inorg_N_ratio, colour=farmtype)) +
+  xlab ("Crop year") +
+  labs(colour="Farm type") +
+  ylim(0,1) +
+  ylab ("Fraction of nitrogen from inorganic manure")+
+  theme(legend.position = "right")
+```
+
+## Other input costs
+
+Some data on quantities of fuel and electricity used is available from farm carbon audits. The quantity data is in the form of CO~2~ emissions, and is available for diesel, electricity and "other fuels". The spending data comes from the main FBS, and gives total fuel spending (including electricity).
+
+Note that the carbon audit for the 2018 crop year was a pilot, looking only at $\approx$ 1/4 of the farms, so isn't truly comparable to the other years (spending is not affected, and could be looked at further back in time).
+
+```{r fuel, echo=FALSE}
+ggplot(data=output_fuel, aes(x=cropyear, y=value, fill = key)) +
+  geom_bar(position="dodge", stat="identity") +
+  xlab("Crop year") +
+  ylab(expression(paste("Amount (£ or kg ",CO[2],"e)"))) +
+  theme(legend.position = "right")
+```
+
+## Quality assurance questions
+
+For each of these, also consider if there are differences in between livestock and non-livestock farms?
+
+* Has the amount of money spent on fertiliser changed this year?
+* Is this because:
+  * The amount of fertiliser bought/used changed?
+  * The price of fertiliser itself changed?
+  * Both/neither/cancelled each other out?
+* Have there been any large ($\gtrsim$ 20%) surpluses?
+* Are farmers using more or less synthetic fertiliser?
+* Have there been any notable changes in the amount of fuel/electricity used, or the amount of money spent?
+
+SACC should be able to advise on explanations for the above.
+
+## Future data exploration
+
+Data on purchased quantities of the following is currently gathered by SACC for the purposes of the carbon audits, but is not entered into the FBS workbook. This means it is not currently available to us. Making it available for future survey years is a stipulation in the new FBS contract, so it should be available from crop year 2022 onwards.
+
+Examples of such data are:
+
+* Actual fertiliser weights (as opposed to nutrient weights)
+* Feed
+* Seed
+* Spray
+* Fuel
+
+The QA process should be reviewed when these data sources are available. When fertiliser weight data is available, then the AHDB dataset on historic fertiliser prices is likely to be a useful comparison^[https://ahdb.org.uk/GB-fertiliser-prices]. As carbon audit data becomes available for more years, it should become helpful to look at a breakdown of fuel and electricity use/spend by farmtype.
