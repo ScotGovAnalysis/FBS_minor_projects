@@ -52,3 +52,7 @@ rsconnect/
 *.csv
 *.xls*
 *.sas7bdat
+
+#Images- etc.
+*png
+*html
