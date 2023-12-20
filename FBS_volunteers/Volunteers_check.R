@@ -3,8 +3,8 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 FBS_directory_path <- '//s0177a/sasdata1/ags/fas/'
-datayear=2022
-sampyear=2022
+datayear=2023
+sampyear=2023
 
 FBS_data_file <- paste0("so_y", datayear, "_fa",".sas7bdat")
 FBS_data <- tryCatch(
@@ -82,11 +82,11 @@ for (x in colnames(FBS_info)){
   attr(FBS_info[[deparse(as.name(x))]],"format.sas")=NULL
 }
 FBS_info_process <- FBS_info %>% 
-  select(fa_id, volunteer=f_volunteer)
+  select(fa_id, volunteer=fi_volunteer)
 
 #Join datasets to add volunteer flag to FBS_data_process
 FBS_data_process <- FBS_data_process %>% 
-  left_join(FBS_info, by='fa_id')
+  left_join(FBS_info_process, by='fa_id')
 
 
 FBI <- FBS_data_process %>% 
@@ -122,7 +122,7 @@ for (i in 1:8){
   assign(paste("scatter",i,sep = "_"), scatter)
 }
 bin_number = 2*sqrt(All_merge$count[All_merge$volunteer=="both"])
-plot_all <- ggplot(FBS_data_process, aes(fa_fbi, fill=volunteer)) +
+plot_all <- ggplot(FBS_data_process, aes(fa_fbi, fill=as.factor(volunteer))) +
   geom_histogram(bins=bin_number) +
   labs(title="All")
 scatter_all <- ggplot(FBS_data_process, aes(x=fa_input, y=fa_outpt, colour=volunteer)) +
