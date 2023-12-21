@@ -8,10 +8,13 @@ library(haven)
 #Manual variables
 datayear=2022
 census_year=datayear-1
-FBS_directory_path <- '//s0177a/sasdata1/ags/fas/'
+#Use an environment variable to specify the FBS and census data paths.
+#See https://csgillespie.github.io/efficientR/set-up.html#renviron
+#The path here is to the FAS/asgscens folder on the SAS drive.
+FBS_directory_path <- Sys.getenv("FBS_directory_path")
+census_directory_path <- Sys.getenv("Census_directory_path")
 FBS_data_file <- paste0("so_y", datayear, "_fa",".sas7bdat")
 weights_file <- "new_weights.sas7bdat"
-census_directory_path <- '//s0177a/sasdata1/ags/census/agscens/'
 census_data_file <- paste0("june", census_year, ".sas7bdat")
 size_band_A <- 25000
 size_band_B <- 100000

@@ -33,7 +33,10 @@ for (sampyear in sampyear_range){
   }
   #Read in farm_account data
   
-  FBS_directory_path <- '//s0177a/sasdata1/ags/fas/'
+  #Use an environment variable to specify the FBS data path.
+  #See https://csgillespie.github.io/efficientR/set-up.html#renviron
+  #The path here is to the FAS folder on the SAS drive.
+  FBS_directory_path <- Sys.getenv("FBS_directory_path")
   FBS_fa_data_file <- paste0("so_y", datayear, "_fa",".sas7bdat")
   FBS_fa_data <- tryCatch(
     {

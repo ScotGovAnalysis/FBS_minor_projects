@@ -85,8 +85,11 @@ CA <- CA_test %>%
 
 # bring in FBS weights
 
-
-weights_file <- '//s0177a/sasdata1/ags/fas/new_weights.sas7bdat'
+#Use an environment variable to specify the FBS data paths.
+#See https://csgillespie.github.io/efficientR/set-up.html#renviron
+#The path here is to the FAS folder on the SAS drive.
+FBS_directory_path <- Sys.getenv("FBS_directory_path")
+weights_file <- paste0(FBS_directory_path,"new_weights.sas7bdat")
 weights <- read_sas(weights_file)
 names(weights) <- tolower(names(weights))
 for (x in colnames(weights)){

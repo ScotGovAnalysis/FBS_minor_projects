@@ -9,10 +9,13 @@ fbs_type_words <- c("Cereals","General Cropping","Dairy","LFA Sheep","LFA Cattle
 FBS_type_tab <- data.frame(fbs_type_numbers, fbs_type_words)
 
 #Input data folders
-FBS_directory_path<- '//s0177a/sasdata1/ags/fas/'
-agstemp_path <- '//s0177a/sasdata1/ags/census/agstemp/'
+#Use an environment variable to specify the FBS and census data paths.
+#See https://csgillespie.github.io/efficientR/set-up.html#renviron
+#The path here is to the FAS/asgscens folder on the SAS drive.
+FBS_directory_path <- Sys.getenv("FBS_directory_path")
+agstemp_directory_path <- Sys.getenv("Agstemp_directory_path")
 
-#Fucntions
+#Functions
 read_sas2 <- function(directory, filename){
   dataset <- tryCatch(
     {

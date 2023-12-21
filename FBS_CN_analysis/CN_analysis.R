@@ -7,8 +7,12 @@ library(data.table)
 library(gridExtra)
 library(grid)
 ##Specify the locations of the data to be read in (SAS drive) and where outputs should go (currently the Z drive.)
-FBS_directory_path <- '//s0177a/sasdata1/ags/fas/'
-Output_directory <- paste0('//s0177a/datashare/seerad/fas/raw_data/prod',max(cropyear_range)+1,'/Sefari_outputs/')
+#Use an environment variable to specify the FBS and Z drive data paths.
+#See https://csgillespie.github.io/efficientR/set-up.html#renviron
+#The path here is to the FAS folder on the SAS drive.
+FBS_directory_path <- Sys.getenv("FBS_directory_path")
+Z_drive_path <- Sys.getenv("Z_drive_path")
+Output_directory <- paste0(Z_drive_path,'prod',max(cropyear_range)+1,'/Sefari_outputs/')
 
 #Variables for farmtype names and numbering
 fbs_type_numbers <- c(1:10)

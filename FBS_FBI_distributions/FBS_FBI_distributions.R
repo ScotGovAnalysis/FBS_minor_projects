@@ -40,9 +40,10 @@ if (sampyear == 2022) {
   datayear <- sampyear + 1
 }
 
-#Read in farm_account data from SAS drive.
-#This is the FBS folder on the SAS drive; I'm not sure who has access to this.
-FBS_directory_path <- '//s0177a/sasdata1/ags/fas/'
+#Use an environment variable to specify the FBS data paths.
+#See https://csgillespie.github.io/efficientR/set-up.html#renviron
+#The path here is to the FAS folder on the SAS drive.
+FBS_directory_path <- Sys.getenv("FBS_directory_path")
 FBS_fa_data_file <- paste0("so_y", datayear, "_fa", ".sas7bdat")
 #Check if the farm_account dataset already exists in the current work directory, and download it from
 #the SAS drive if it doesn't

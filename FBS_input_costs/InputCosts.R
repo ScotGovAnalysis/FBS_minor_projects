@@ -28,8 +28,10 @@ years <- (2019:2022)
 #Years where carbon audit data is available are 2019 onwards. 2019 only for pilot (~1/4 of farms), so
 #won't be truly comparable.
 carbon_audit_years <- (2019:2022)
-#define directory path
-directory_path <- '//s0177a/sasdata1/ags/fas'
+#Use an environment variable to specify the FBS data paths.
+#See https://csgillespie.github.io/efficientR/set-up.html#renviron
+#The path here is to the FAS folder on the SAS drive.
+FBS_directory_path <- Sys.getenv("FBS_directory_path")
 #If only interested in a particular farmtype, select here. For all farms, set to 9.
 farmtype <- 9
 #Formatting for farmtypes

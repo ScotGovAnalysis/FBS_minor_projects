@@ -21,8 +21,12 @@ census_type_words <- c("Cereals","General Cropping","Dairy","LFA Sheep","LFA Cat
 census_type_tab <- data.frame(census_type_numbers, census_type_words)
 
 #Identify the locations and names of the datasets to be imported
-census_directory_path <- '//s0177a/sasdata1/ags/census/agscens/'
-FBS_directory_path <- '//s0177a/sasdata1/ags/fas/'
+
+#Use an environment variable to specify the FBS and census data paths.
+#See https://csgillespie.github.io/efficientR/set-up.html#renviron
+#The path here is to the FAS/asgscens folder on the SAS drive.
+FBS_directory_path <- Sys.getenv("FBS_directory_path")
+census_directory_path <- Sys.getenv("Census_directory_path")
 census_data_file <- paste0("june",year,".sas7bdat")
 FBS_data_file <- paste0("so_y", datayear, "_fa",".sas7bdat")
 

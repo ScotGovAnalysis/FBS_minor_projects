@@ -2,7 +2,11 @@ library(haven)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-FBS_directory_path <- '//s0177a/sasdata1/ags/fas/'
+
+#Use an environment variable to specify the FBS data path.
+#See https://csgillespie.github.io/efficientR/set-up.html#renviron
+#The path here is to the FAS folder on the SAS drive.
+FBS_directory_path <- Sys.getenv("FBS_directory_path")
 datayear=2023
 sampyear=2023
 
