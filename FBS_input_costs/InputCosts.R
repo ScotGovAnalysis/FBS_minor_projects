@@ -24,10 +24,10 @@ library(ade4)
 source("resas_theme.R", encoding = "UTF-8")
 
 #Sample years to be run on. 2015 is the earliest year we have data for.
-years <- (2019:2022)
+years <- (2019:2023)
 #Years where carbon audit data is available are 2019 onwards. 2019 only for pilot (~1/4 of farms), so
 #won't be truly comparable.
-carbon_audit_years <- (2019:2022)
+carbon_audit_years <- (2019:2023)
 #Use an environment variable to specify the FBS data paths.
 #See https://csgillespie.github.io/efficientR/set-up.html#renviron
 #The path here is to the FAS folder on the SAS drive.
@@ -51,7 +51,7 @@ import_sas <-function(directory_path, datayear, suffix) {
   return(dataset)
 }
 #Import weights file
-weights_file <- paste(directory_path, "/new_weights.sas7bdat", sep='')
+weights_file <- paste(FBS_directory_path, "/new_weights.sas7bdat", sep='')
 weights <- read_sas(weights_file)
 names(weights) <- tolower(names(weights))
 for (x in colnames(weights)){
@@ -77,10 +77,10 @@ main_code <- function(sampyear){
   }
   
   #Import SAS datasets, except weights file
-  farm_account <- import_sas(directory_path, datayear, "fa")
-  fert_quantity <- import_sas(directory_path, datayear, "anpk")
+  farm_account <- import_sas(FBS_directory_path, datayear, "fa")
+  fert_quantity <- import_sas(FBS_directory_path, datayear, "anpk")
   if(sampyear %in% carbon_audit_years){
-    carbon_audit <- import_sas(directory_path, datayear, "carbon")
+    carbon_audit <- import_sas(FBS_directory_path, datayear, "carbon")
     #Gather manure data from the carbon audit dataset
     carbon_audit <- carbon_audit %>% 
       select(fa_id, no_mants, no_orgmants, de_d, de_e, de_of) %>% 
@@ -298,7 +298,7 @@ BSFP_data$BSFP_usage_T = rowSums(BSFP_data[, c("BSFP_usage_N","BSFP_usage_P","BS
 ggplot(data=output_all) +
   geom_point(mapping=aes(x=cropyear, y=avg_tonnes_used_NPKT, colour=farmtype)) +
   ylim(0,70)+
-  xlab("Year") +
+  xlab("Crop year") +
   ylab("Average NPK used (tonnes)")
 
 #Graph of Average tonnes of fertiliser used per hectare, by farmtype
@@ -313,19 +313,19 @@ ggplot(data=output_all) +
 ggplot(data=output_all) +
   geom_point(mapping=aes(x=cropyear, y=avg_tonnes_bought_NPKT, colour=farmtype)) +
   ylim(0,70) +
-  xlab("Year") +
+  xlab("Crop year") +
   ylab("Average NPK bought (tonnes)")
 
 #Graph of Average spend on fertiliser by farmtype
 ggplot(data=output_all) +
   geom_point(mapping=aes(x=cropyear, y=avg_fert_spend, colour=farmtype)) +
-  xlab("Year") +
+  xlab("Crop year") +
   ylab("Average spend (£)")
 
 #Graph of Average fertiliser surplus (amount bought minus amount used)
 ggplot(data=output_all) +
   geom_point(mapping=aes(x=cropyear, y=(avg_tonnes_bought_ha_NPKT-avg_tonnes_used_ha_NPKT), colour=farmtype)) +
-  xlab("Year") +
+  xlab("Crop year") +
   # ylim(-ceiling(abs(max(max(output_all$avg_tonnes_bought_NPKT - output_all$avg_tonnes_used_NPKT),min(output_all$avg_tonnes_bought_NPKT - output_all$avg_tonnes_used_NPKT)))),ceiling(abs(max(max(output_all$avg_tonnes_bought_NPKT - output_all$avg_tonnes_used_NPKT),min(output_all$avg_tonnes_bought_NPKT - output_all$avg_tonnes_used_NPKT)))))+
   ylab("Average surplus (tonnes)")
 
@@ -333,9 +333,9 @@ ggplot(data=output_all) +
 ggplot(data=output_all) +
   geom_point(nutrient_data, mapping = aes(x=cropyear, y=nutrient_price_T, size=8), shape=18) +
   geom_point(mapping=aes(x=cropyear, y=pounds_per_kg, colour=farmtype)) +
-  ylim(0,1) +
+  ylim(0, NA) +
   ylab("Nutrient price (£/kg)") +
-  xlab("Year")
+  xlab("Crop year")
 
 #Graphs of fuel data
 ggplot(data=output_fuel,aes(x=cropyear, y=value, fill = key)) +
@@ -346,7 +346,7 @@ ggplot(data=output_fuel,aes(x=cropyear, y=value, fill = key)) +
 #Note, from carbon audit, so data only starts in 2019.
 ggplot(data=filter(output_all, ys_year %in% carbon_audit_years)) +
   geom_point(mapping=aes(x=cropyear, y=inorg_N_ratio, colour=farmtype)) +
-  xlab ("Year") +
+  xlab ("Crop year") +
   ylim(0,1) +
   ylab ("Fraction of nitrogen from inorganic manure") +
   theme(legend.position = "right")
