@@ -3,6 +3,9 @@ library(tidyverse)
 library(haven)
 library(data.table)
 library(writexl)
+library(RtoSQLServer)
+library(rapid.spreadsheets)
+library(openxlsx)
 
 #Function to apply name formats for farm types
 apply_type_formats <- function(table_name) {
@@ -33,16 +36,27 @@ FBS_data_file <- paste0("so_y", datayear, "_fa",".sas7bdat")
 ## Read in the census data for the relevant crop year. The code first looks in the project folder and reads in the data from there if the
 ## file has already been downloaded. If it's not found there, it copies the file from the SAS drive then reads it in.
 
-census_data <- tryCatch(
-  {
-    census_data <- read_sas(census_data_file)
-  },
-  error = function(e)
-  {
-    file.copy(paste0(census_directory_path, census_data_file), getwd())
-    return(read_sas(census_data_file))
-  }
-)
+# census_data <- tryCatch(
+#   {
+#     census_data <- read_sas(census_data_file)
+#   },
+#   error = function(e)
+#   {
+#     file.copy(paste0(census_directory_path, census_data_file), getwd())
+#     return(read_sas(census_data_file))
+#   }
+# )
+
+#adm census
+# #2022
+server <- "s0196a\\ADM"
+database <- "RuralAndEnvironmentalScienceFarmingStatistics"
+schema <- "juneagriculturalsurvey2023alpha"
+
+census_data <- read_table_from_db(server=server,
+                                  database=database,
+                                  schema=schema,
+                                  table_name="JAC22_10_01_24")
 
 #Read in FBS data. First, try reading it in from the project folder, and if not found, copy it from the SAS drive and then read it in.
 FBS_data <- tryCatch(
@@ -77,7 +91,7 @@ census_data_process <- census_data
 # rather than a number of employees (since all range between 1-4)
 special_cols <- c("item177","item178","item179","item182","item183","item184")
 census_data_process[,special_cols][census_data_process[,special_cols]>1]=1
-
+census_data_process[is.na(census_data_process)]=0
 #Identify farm types based on FADN typology (typhigh, typmed, typlow, robust_new)
 census_data_process <- census_data_process %>% 
   mutate(totlab = rowSums(census_data_process[c("item177","item178","item179","item182","item183","item184", "item200")], na.rm=F)) %>% 

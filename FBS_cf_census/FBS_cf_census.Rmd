@@ -143,16 +143,16 @@ Table_5_out %>%
 ```
 ---
  
-<center>**Table 6** - FBS threshold farms in relation to the total census population by numbers of sheep.</center>
-```{r Table_99, echo=FALSE}
-Table_99_out %>% 
-  kable(format = "html", align = "lrrr", format.args = list(big.mark = ",")) %>% 
-  kable_styling(position = "center",font_size = 14) %>% 
-  add_header_above(c(" "=1, "Sheep numbers"=3), background = "#2c7b3e",color = "white", bold = T) %>% 
-  row_spec(0, bold = TRUE, background = "#2c7b3e",color = "white", extra_css = "line-height: 20px; vertical-align: middle;") %>%
-  row_spec(c(1:8,15), bold = TRUE)
-```
----
+<!-- <center>**Table 6** - FBS threshold farms in relation to the total census population by numbers of sheep.</center> -->
+<!-- ```{r Table_99, echo=FALSE} -->
+<!-- Table_99_out %>%  -->
+<!--   kable(format = "html", align = "lrrr", format.args = list(big.mark = ",")) %>%  -->
+<!--   kable_styling(position = "center",font_size = 14) %>%  -->
+<!--   add_header_above(c(" "=1, "Sheep numbers"=3), background = "#2c7b3e",color = "white", bold = T) %>%  -->
+<!--   row_spec(0, bold = TRUE, background = "#2c7b3e",color = "white", extra_css = "line-height: 20px; vertical-align: middle;") %>% -->
+<!--   row_spec(c(1:8,15), bold = TRUE) -->
+<!-- ``` -->
+<!-- --- -->
 
 
 
